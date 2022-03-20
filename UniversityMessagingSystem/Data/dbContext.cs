@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversityMessagingSystem.Entities;
+using UniversityMessagingSystem.Entities.Messages;
 
 namespace UniversityMessagingSystem.Data
 {
@@ -17,5 +18,7 @@ namespace UniversityMessagingSystem.Data
         }
 
         public DbSet<User> user { get; set; }
+
+        public DbSet<Message> messages { get; set; }
     }
 }

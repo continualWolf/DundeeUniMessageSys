@@ -1,12 +1,62 @@
-﻿@{
+﻿@inject UniversityMessagingSystem.Data.dbContext _context
+@model UniversityMessagingSystem.Entities.User
+@{
     ViewData["Title"] = "Home Page";
     Layout = "_Layout";
+    var messages = _context.messages.ToList();
+    
 }
 <div class="row">
     <div class="col-md-3" style="background-color: aqua">
-        <h5>Left</h5>
+        
+
+            @if(Model != null)
+            {
+                <input type="hidden" name="fromEmail" value="@Model.Email" />
+
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="To: email" name="toEmail" id="email"/>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Message:" name="Message" id="message"/>
+                </div>
+
+                <button class="btn-primary btn" id="send">Send</button>
+            }
+            
+        
     </div>
-    <div class="col-md-9">
+    <div class="col-md-9" id="right-side">
         <h5>Right</h5>
     </div>
 </div>
+<script>
+    var messages;
+    var sendMessage = document.getElementById("send");
+
+    sendMessage.onclick = function(){
+    var message = document.getElementById("message").value;
+    var toEmail = document.getElementById("email").value;
+
+    $.ajax({            
+            url: 'MessageCentre/SendMessage',
+            data: { toEmail: toEmail }, 
+        }).done(function () {
+            console.log('done')
+        });
+    }
+
+    setInterval(function(){
+        $.ajax({
+            url:'MessageCentre/GetMessages',
+            success : function(response){
+                messages = JSON.parse(response);
+            }
+        });
+        var temp = document.getElementById("right-side");
+        const h1 = document.createElement("h1");
+        const textNode = document.createTextNode(messages[1].message);
+        h1.appendChild(textNode);
+        temp.appendChild(h1);
+    }, 100);
+</script>

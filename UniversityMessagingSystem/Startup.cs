@@ -1,4 +1,4 @@
-﻿using CMSmk1.Data;
+﻿
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using UniversityMessagingSystem.Data;
@@ -25,8 +25,6 @@ namespace UniversityMessagingSystem
             services.AddDbContext<dbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
 
             services.AddControllersWithViews();
-
-            services.AddScoped<IUserRepo, UserRepo>();
         }
     }
 }
