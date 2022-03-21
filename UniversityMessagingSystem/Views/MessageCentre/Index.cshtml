@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Home Page";
     Layout = "_Layout";
-    var messages = _context.messages.ToList();
+    var messages = _context.messages.Where(i => i.toEmail == Model.Email).ToList();
     
 }
 <div class="row">
@@ -12,7 +12,9 @@
 
             @if(Model != null)
             {
-                <input type="hidden" name="fromEmail" value="@Model.Email" />
+                <input type="hidden" name="fromEmail" value="@Model.Email" id="fromEmail"/>
+
+                <input type="hidden" id="userId" value="@Model.Id" />
 
                 <div class="form-group">
                     <input type="text" class="form-control" placeholder="To: email" name="toEmail" id="email"/>
@@ -31,32 +33,53 @@
     </div>
 </div>
 <script>
-    var messages;
     var sendMessage = document.getElementById("send");
+
+    
+        
 
     sendMessage.onclick = function(){
     var message = document.getElementById("message").value;
     var toEmail = document.getElementById("email").value;
+    var fromEmail = document.getElementById("fromEmail").value + "";
 
     $.ajax({            
             url: 'MessageCentre/SendMessage',
-            data: { toEmail: toEmail }, 
+            data: { toEmail: toEmail, message: message, fromEmail: fromEmail }, 
         }).done(function () {
             console.log('done')
         });
     }
 
+    window.onload = function(){
+        $.ajax({
+            url : 'MessageCentre/Messages',
+            data : {fromEmail: document.getElementById("fromEmail").value},
+            success : function(response){
+                messList = response;
+            }
+        });
+    }
+
+    var messList = "[]";
     setInterval(function(){
         $.ajax({
             url:'MessageCentre/GetMessages',
-            success : function(response){
-                messages = JSON.parse(response);
+            data : {messList: messList, fromEmail: document.getElementById("fromEmail").value},
+            success : function(data){
+                var val = JSON.parse(data.response);
+
+                if(val != null && data.response != "[]"){
+
+                    var temp = document.getElementById("right-side");
+                    const h1 = document.createElement("h1");
+                    const textNode = document.createTextNode(val[0].message);
+                    h1.appendChild(textNode);
+                    temp.appendChild(h1);
+                    messList = data.oldList;
+
+                }
             }
         });
-        var temp = document.getElementById("right-side");
-        const h1 = document.createElement("h1");
-        const textNode = document.createTextNode(messages[1].message);
-        h1.appendChild(textNode);
-        temp.appendChild(h1);
     }, 100);
 </script>

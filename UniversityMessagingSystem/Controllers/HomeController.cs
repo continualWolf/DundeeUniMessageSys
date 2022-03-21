@@ -32,7 +32,7 @@ namespace UniversityMessagingSystem.Controllers
 
             if(user.Password != password) return RedirectToAction("Index");
 
-            return RedirectToAction("Index", "MessageCentre", new {user = user});
+            return RedirectToAction("Index", "MessageCentre", new {userId = user.Id});
         }
 
         public IActionResult SignUp()
